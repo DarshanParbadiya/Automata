@@ -1,0 +1,16 @@
+{
+  "name": "hooks_monorepo",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy --minify"
+  },
+  "dependencies": {
+    "hono": "^4.6.12",
+    "@repo/db" : "*",
+    "@repo/ui": "*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241112.0",
+    "wrangler": "^3.88.0"
+  }
+}
