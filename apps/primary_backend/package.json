@@ -5,6 +5,10 @@
     "deploy": "wrangler deploy --minify"
   },
   "dependencies": {
+    "@repo/types": "*",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
+    "bcrypt-edge": "^0.1.0",
     "hono": "^4.6.12",
     "hono-rate-limiter": "^0.4.0"
   },

@@ -1,4 +1,3 @@
-
 import { Hono } from 'hono';
 import { db } from '@repo/db/db';
 
@@ -26,6 +25,6 @@ app.get('/health', async (c) => {
   return c.json({ status: 'ok', service: 'Primary backend' });
 });
 
-app.route('/api/v1',v1Router)
+app.route('/api/v1', v1Router);
 
 export default app;
