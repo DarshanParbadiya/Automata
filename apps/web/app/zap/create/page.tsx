@@ -63,7 +63,6 @@ export default function () {
             if (!selectedTrigger?.id) {
               return;
             }
-
             const response = await axios.post(
               `${BACKEND_URL}/api/v1/zap`,
               {
@@ -99,7 +98,7 @@ export default function () {
         </div>
         <div className="w-full pt-2 pb-2">
           {selectedActions.map((action, index) => (
-            <div className="pt-2 flex justify-center">
+            <div key={index} className="pt-2 flex justify-center">
               {' '}
               <ZapCell
                 onClick={() => {
@@ -214,9 +213,9 @@ function Modal({
               >
                 <path
                   stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                 />
               </svg>
@@ -248,9 +247,9 @@ function Modal({
 
             {step === 0 && (
               <div>
-                {availableItems.map(({ id, name, image }) => {
+                {availableItems.map(({ id, name, image },index) => {
                   return (
-                    <div
+                    <div key={index}
                       onClick={() => {
                         if (isTrigger) {
                           onSelect({
