@@ -23,6 +23,7 @@ zapRouter.post('/', authMiddleware, async (c) => {
           create: parsedData.data.actions.map((x, index) => ({
             actionId: x.availableActionId,
             sortingOrder: index,
+            metadata : x.actionMetaData
           })),
         },
         userId: Number(c.get('userId')),
@@ -33,6 +34,7 @@ zapRouter.post('/', authMiddleware, async (c) => {
       data: {
         triggerId: parsedData.data?.availableTriggerId,
         zapId: zap.id,
+       
       },
     });
 

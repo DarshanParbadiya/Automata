@@ -63,8 +63,7 @@ export default function () {
             if (!selectedTrigger?.id) {
               return;
             }
-            const response = await axios.post(
-              `${BACKEND_URL}/api/v1/zap`,
+            console.log(
               {
                 availableTriggerId: selectedTrigger.id,
                 triggerMetadata: {},
@@ -79,8 +78,24 @@ export default function () {
                 },
               }
             );
+            const response = await axios.post(
+              `${BACKEND_URL}/api/v1/zap`,
+              {
+                availableTriggerId: selectedTrigger.id,
+                triggerMetadata: {},
+                actions: selectedActions.map((a) => ({
+                  availableActionId: a.availableActionId,
+                  actionMetaData: a.metadata,
+                })),
+              },
+              {
+                headers: {
+                  Authorization: localStorage.getItem('token'),
+                },
+              }
+            );
 
-            router.push('/dashboard');
+            // router.push('/dashboard');
           }}
         >
           Publish
@@ -223,7 +238,7 @@ function Modal({
             </button>
           </div>
           <div className="p-4 md:p-5 space-y-4">
-            {step === 1 && selectedAction?.id === 'email' && (
+            {step === 1 && selectedAction?.name === 'email' && (
               <EmailSelector
                 setMetadata={(metadata) => {
                   onSelect({
@@ -234,7 +249,7 @@ function Modal({
               />
             )}
 
-            {step === 1 && selectedAction?.id === 'send-sol' && (
+            {step === 1 && selectedAction?.name === 'github' && (
               <SolanaSelector
                 setMetadata={(metadata) => {
                   onSelect({
@@ -247,9 +262,10 @@ function Modal({
 
             {step === 0 && (
               <div>
-                {availableItems.map(({ id, name, image },index) => {
+                {availableItems.map(({ id, name, image }, index) => {
                   return (
-                    <div key={index}
+                    <div
+                      key={index}
                       onClick={() => {
                         if (isTrigger) {
                           onSelect({

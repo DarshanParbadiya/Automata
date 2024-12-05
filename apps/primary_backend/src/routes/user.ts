@@ -65,7 +65,7 @@ userRouter.post('/signin', async (c) => {
     },
   });
   if (!user) {
-    return c.json({ message: 'User Not Found' });
+    return c.json({ message: 'User Not Found' },404);
   }
 
   // compare password with hashed password
@@ -83,7 +83,7 @@ userRouter.post('/signin', async (c) => {
     { id: user.id, email: user.email },
     c.env.JWT_SECRET
   );
-  return c.json({ token, payload });
+  return c.json({ token, payload },200);
 });
 
 userRouter.get('/user', authMiddleware, async (c) => {
@@ -97,6 +97,7 @@ userRouter.get('/user', authMiddleware, async (c) => {
     select: {
       name: true,
       email: true,
+      id : true
     },
   });
   console.log(user);

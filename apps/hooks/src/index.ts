@@ -20,6 +20,11 @@ app.get('/health', async (c) => {
   return c.json({ status: 'ok', service: 'Hooks' });
 });
 
+app.get('/hooks/catch/:userId/:zapId', async (c) => {
+  return c.json({message : "please do POST Request along with metadata"})
+})
+
+
 app.post('/hooks/catch/:userId/:zapId', async (c) => {
   const userId = c.req.param('userId');
   const zapId = c.req.param('zapId');

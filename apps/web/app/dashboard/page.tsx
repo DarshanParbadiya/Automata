@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { BACKEND_URL, HOOKS_URL } from '../config';
 import { LinkButton } from '@/components/buttons/LinkButton';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Zap {
   id: string;
@@ -37,8 +38,18 @@ interface Zap {
 function useZaps() {
   const [loading, setLoading] = useState(true);
   const [zaps, setZaps] = useState<Zap[]>([]);
+  const [user, setUser] = useState({});
 
   useEffect(() => {
+    axios
+      .get(`${BACKEND_URL}/api/v1/user/user`, {
+        headers: {
+          Authorization: localStorage.getItem('token'),
+        },
+      })
+      .then((res) => {
+        setUser(res.data.user);
+      });
     axios
       .get(`${BACKEND_URL}/api/v1/zap`, {
         headers: {
@@ -50,16 +61,18 @@ function useZaps() {
         setLoading(false);
       });
   }, []);
+  // console.log(user);
 
   return {
     loading,
     zaps,
+    user,
   };
 }
 
 //eslint-disable-next-line
 export default function () {
-  const { loading, zaps } = useZaps();
+  const { loading, zaps, user } = useZaps();
   const router = useRouter();
 
   return (
@@ -84,16 +97,16 @@ export default function () {
       ) : (
         <div className="flex justify-center">
           {' '}
-          <ZapTable zaps={zaps} />{' '}
+          {user && <ZapTable zaps={zaps} user={user} />}
         </div>
       )}
     </div>
   );
 }
 
-function ZapTable({ zaps }: { zaps: Zap[] }) {
+function ZapTable({ zaps, user }: { zaps: Zap[]; user: any }) {
+  console.log(user)
   const router = useRouter();
-
   return (
     <div className="p-8 max-w-screen-lg w-full">
       <div className="flex">
@@ -103,17 +116,23 @@ function ZapTable({ zaps }: { zaps: Zap[] }) {
         <div className="flex-1">Webhook URL</div>
         <div className="flex-1">Go</div>
       </div>
-      {zaps.map((z,index) => (
+      {zaps.map((z, index) => (
         <div key={index} className="flex border-b border-t py-4">
           <div className="flex-1 flex">
             <img src={z.trigger.type.image} className="w-[30px] h-[30px]" />{' '}
-            {z.actions.map((x,index) => (
-              <img src={x.type.image} className="w-[30px] h-[30px]" key={index}/>
+            {z.actions.map((x, index) => (
+              <img
+                src={x.type.image}
+                className="w-[30px] h-[30px]"
+                key={index}
+              />
             ))}
           </div>
           <div className="flex-1">{z.id}</div>
           <div className="flex-1">Nov 13, 2023</div>
-          <div className="flex-1">{`${HOOKS_URL}/hooks/catch/1/${z.id}`}</div>
+          {/* <Link href={`${HOOKS_URL}/hooks/catch/1/${z.id}`}> */}
+          <div className="flex-1">{`${HOOKS_URL}/hooks/catch/${user.id}/${z.id}`}</div>
+          {/* </Link> */}
           <div className="flex-1">
             <LinkButton
               onClick={() => {

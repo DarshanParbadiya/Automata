@@ -58,8 +58,9 @@ export default function () {
                       password,
                     }
                   );
-                  if (res.data.error) {
-                    alert(res.data.error);
+                  console.log(res)
+                  if (!res.data.token) {
+                    alert(res.data.message);
                     return;
                   } else {
                     localStorage.setItem('token', res.data.token);
