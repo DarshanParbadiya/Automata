@@ -30,7 +30,11 @@ export const producer = async (prisma: PrismaClient, redis: Redis) => {
       console.log(`Added ${messages.length} messages to Redis.`);
   
       // Delete processed rows
-      await prisma.zapRunOutbox.deleteMany({
+      await /* `prisma` is a PrismaClient instance that is used to interact with the database. In the
+      provided code snippet, `prisma` is used to fetch pending rows from a specific table
+      (`zapRunOutbox`) in the database, delete processed rows, and perform database operations
+      related to the `zapRunOutbox` table. */
+      prisma.zapRunOutbox.deleteMany({
         where: {
           id: {
             in: pendingRows.map((x) => x.id),
