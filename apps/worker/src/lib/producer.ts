@@ -1,5 +1,6 @@
-
+import z from 'zod'
 import { PrismaClient } from '@prisma/client/edge';
+import { redisMessageSchema } from '@repo/types/export/worker';
 import { Redis } from '@upstash/redis/cloudflare';
 // Producer function
 export const producer = async (prisma: PrismaClient, redis: Redis) => {
@@ -44,3 +45,22 @@ export const producer = async (prisma: PrismaClient, redis: Redis) => {
     }
   };
   
+export const produceSingleMessage = async (prisma : PrismaClient,redis : Redis,message : z.infer<typeof redisMessageSchema>) => {
+  const parsedData = redisMessageSchema.safeParse(message);
+  if (!parsedData.success) {
+    console.error('Invalid message:', message);
+    return false;
+  }
+  // const messages = pendingRows.map((r) =>
+    const redisItem = JSON.stringify(message)
+  // );
+
+  // for array of messages
+  // for (const message of messages) {
+  //   await redis.lpush('PENDING_MESSAGES', message);
+  // }
+  // for single message
+  await redis.lpush('PENDING_MESSAGES', redisItem);
+
+  console.log(`Added ${redisItem} messages to Redis.`);
+}
