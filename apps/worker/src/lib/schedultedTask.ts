@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client/edge';
 import { Redis } from '@upstash/redis/cloudflare';
-import { producer } from './producer';
+import { consumer } from './consumer';
 
 export async function performScheduledTask(env: any): Promise<void> {
     console.log('Performing scheduled task at:', new Date().toISOString());
@@ -14,7 +14,7 @@ export async function performScheduledTask(env: any): Promise<void> {
   
     // Start the producer in a scheduled manner
     // Execute the producer function
-    await producer(prisma, redis);
+    await consumer(prisma,redis,env.JWT_SECRET);
     // Add your scheduled task logic here
     // Example: Send an API request, clean up a database, etc.
   }

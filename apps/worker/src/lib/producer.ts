@@ -64,3 +64,4 @@ export const produceSingleMessage = async (prisma : PrismaClient,redis : Redis,m
 
   console.log(`Added ${redisItem} messages to Redis.`);
 }
+

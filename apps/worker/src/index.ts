@@ -8,6 +8,10 @@ import { producer, produceSingleMessage } from './lib/producer';
 import { performScheduledTask } from './lib/schedultedTask';
 import { PrismaClient } from '@prisma/client/edge';
 import { mapping } from './constants/helper';
+import { JsonObject } from '@prisma/client/runtime/library';
+import { parser } from './lib/parser';
+import { sendEmail } from './lib/email';
+import { decode, sign, verify } from 'hono/jwt';
 
 const app = new Hono<RedisContext>();
 // app.use(cors());
@@ -27,9 +31,34 @@ app.get('/health', async (c) => {
   return c.json({ status: 'ok', service: 'worker' });
 });
 
+app.get('/send', async (c) => {
+  const authToken = await sign(
+    { message: 'Email sending Services for Automata' },
+    c.env.JWT_SECRET
+  );
+  const response = await sendEmail(
+    'nakarnakamu@gmail.com',
+    'Hello World',
+    authToken
+  );
+  return c.json({ message: response });
+});
+
+app.get('/removeSingle', async (c) => {
+  const redis = c.get('redis');
+  const batchSize = 1; // Define the number of messages to process at once
+  const messages = await redis.lrange('PENDING_MESSAGES', 0, batchSize - 1);
+  await redis.lrem('PENDING_MESSAGES', 1, messages[0]);
+});
 app.get('/run', async (c) => {
   let prisma: PrismaClient = c.get('prisma');
   const redis = c.get('redis');
+
+  const authToken = await sign(
+    { message: 'Email sending Services for Automata' },
+    c.env.JWT_SECRET
+  );
+
   console.log('running single time...');
   // Start the producer in a scheduled manner
   const batchSize = 1; // Define the number of messages to process at once
@@ -86,6 +115,24 @@ app.get('/run', async (c) => {
     if (currentAction?.type.name == 'email') {
       // send email
       console.log('send email');
+      const body = (currentAction.metadata as JsonObject)?.body; //body: 'You just received {comment.amount} as Bounty'
+      const to = (currentAction.metadata as JsonObject)?.email; //comment.email
+      const zapMetaData = zapRunDetails?.metadata; //{ comment: { email: 'nakarnakamu@gmail.com', amount: '$5' } }
+      // const emailMessage = parser(body as string,zapMetaData?.comment as JsonObject);
+      // const emailAddress = parser(to as string,zapMetaData?.comment as JsonObject);
+      const emailMessage = parser(body as string, zapMetaData as JsonObject);
+      const emailAddress = parser(to as string, zapMetaData as JsonObject);
+      console.log('final message', emailMessage);
+      console.log('final email', emailAddress);
+      // send email
+      console.log(
+        `Sending out email to ${emailAddress} with message ${emailMessage}`
+      );
+      await sendEmail(emailAddress, emailMessage, authToken);
+
+      // since current action is done so delete the messsage form redis
+      // remove the message from the redis after action
+      await redis.lrem('PENDING_MESSAGES', 1, message);
     }
 
     if (currentAction?.type.name == 'github') {
@@ -94,13 +141,12 @@ app.get('/run', async (c) => {
 
     // check if it is the last action
     const lastStage = (zapRunDetails?.zap.actions?.length || 1) - 1;
-    console.log("lastStage",lastStage)
-    if (lastStage == stage){
+    console.log('lastStage', lastStage);
+    if (lastStage == stage) {
       // last stage so delete the message after action
-    }
-    else{
-      console.log('adding the message to the redis')
-      produceSingleMessage(prisma,redis,{zapRunId,stage:stage+1})
+    } else {
+      console.log('adding the message to the redis');
+      produceSingleMessage(prisma, redis, { zapRunId, stage: stage + 1 });
     }
 
     // const messages = pendingRows.map((r) =>
