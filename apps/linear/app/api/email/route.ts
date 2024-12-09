@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // const decoded = jwt.decode(token);
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'sec3rt');
       // const decoded = jwt.verify(token, secretKey); // Verifies the token signature
       // console.log('Verified Payload:', decoded);
     } catch (err) {
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-  } catch (error) {
+  } catch (error : any) {
     console.error('Error sending email:', error);
     return new Response(
       JSON.stringify({ message: 'Failed to send email', error: error.message }),

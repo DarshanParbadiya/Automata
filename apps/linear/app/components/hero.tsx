@@ -1,6 +1,7 @@
 import { cn } from '@repo/ui/lib/utils';
 interface HeroProps {
   children: any;
+  className?: string;
 }
 
 interface HeroElementProps {
