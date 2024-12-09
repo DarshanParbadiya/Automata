@@ -1,19 +1,9 @@
-import Image, { type ImageProps } from 'next/image';
-import { Container } from '@repo/ui/custom_components/container';
-import Hero, { HeroSubTitle, HeroTitle } from './components/hero';
-import Button, { IconWrapper } from './components/button';
-import { FaArrowRight } from 'react-icons/fa6';
-import { FaAngleRight } from 'react-icons/fa';
-type Props = Omit<ImageProps, 'src'> & {
-  srcLight: string;
-  srcDark: string;
-};
 
 export default function Home() {
   return (
     <div className="">
       <main>
-        <Container className="pt-[6.4rem]">
+        {/* <Container className="pt-[6.4rem]">
           <Hero className="">
             <Button
               className="animate-fade-in opacity-0 translate-y-[-1rem]"
@@ -51,7 +41,7 @@ export default function Home() {
               alt="hero"
             />
           </Hero>
-        </Container>
+        </Container> */}
       </main>
     </div>
   );

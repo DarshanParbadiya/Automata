@@ -1,10 +1,6 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+
 import './globals.css';
-import { Container } from '@repo/ui/custom_components/container';
-import Header from './components/header';
-import NewHeader from './components/new-header';
-import Footer from './components/footer';
 
 // const geistSans = localFont({
 //   src: './fonts/GeistVF.woff',
@@ -34,9 +30,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Header />
+        {/* <Header /> */}
         <main className="pt-[var(--navigation-height)] bg-page-gradient">{children}</main>
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );
