@@ -1,6 +1,4 @@
-// 901622625791-ravrgm7uvord0e4af3mnvrura11vfspb.apps.googleusercontent.com
 
-// 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
 export async function sendEmail(to: String, body: string, authToken: string) {
   console.log(`Sending out email to ${to} with message ${body}`);
   // return true;
